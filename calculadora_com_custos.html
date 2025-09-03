@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Solar - Dimensionamento e Custos</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f4a261 0%, #e76f51 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2a9d8f 0%, #264653 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Tela de Captura de E-mail */
+        .email-capture {
+            padding: 60px 40px;
+            text-align: center;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .email-capture h2 {
+            color: #2a9d8f;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .email-capture p {
+            color: #6c757d;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            max-width: 500px;
+            line-height: 1.6;
+        }
+
+        .email-form {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .email-form h3 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #2a9d8f;
+            box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.1);
+        }
+
+        .access-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #2a9d8f 0%, #264653 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .access-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(42, 157, 143, 0.3);
+        }
+
+        .benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+            max-width: 600px;
+        }
+
+        .benefit-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .benefit-item .icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .benefit-item h4 {
+            color: #2a9d8f;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .benefit-item p {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Calculadora (inicialmente oculta) */
+        .calculator-content {
+            display: none;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            text-align: center;
+            background: #e9ecef;
+            color: #6c757d;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .tab.active {
+            background: #fff;
+            color: #2a9d8f;
+            border-bottom: 3px solid #2a9d8f;
+        }
+
+        .content-area {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            min-height: 700px;
+        }
+
+        .input-section {
+            padding: 40px;
+            background: #fff;
+            border-right: 1px solid #e9ecef;
+        }
+
+        .results-section {
+            padding: 40px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            text-align: center;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #2a9d8f;
+            box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.1);
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #2a9d8f 0%, #264653 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(42, 157, 143, 0.3);
+        }
+
+        .main-result {
+            background: linear-gradient(135deg, #2a9d8f 0%, #264653 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .main-result h3 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .main-result .value {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .main-result .unit {
+            font-size: 1.5rem;
+            opacity: 0.8;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 30px;
+        }
+
+        .result-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .result-card h4 {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .result-card .value {
+            color: #2a9d8f;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .result-card .unit {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .cost-section {
+            background: linear-gradient(135deg, #e76f51 0%, #f4a261 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .cost-section h3 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .cost-range {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .cost-item {
+            text-align: center;
+        }
+
+        .cost-item .label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .cost-item .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .cost-disclaimer {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            color: #856404;
+            font-size: 0.9rem;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .cost-disclaimer strong {
+            color: #664d03;
+        }
+
+        .solar-panel-icon {
+            width: 80px;
+            height: 80px;
+            margin: 20px auto;
+            background: linear-gradient(135deg, #f4a261 0%, #e76f51 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+        }
+
+        .info-box h4 {
+            color: #1976d2;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .info-box p {
+            color: #424242;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .cep-info {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px 15px;
+            margin-top: 10px;
+            border-radius: 5px;
+            font-size: 0.85rem;
+            color: #856404;
+        }
+
+        .user-info {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            color: #155724;
+        }
+
+        @media (max-width: 768px) {
+            .content-area {
+                grid-template-columns: 1fr;
+            }
+            
+            .input-section {
+                border-right: none;
+                border-bottom: 1px solid #e9ecef;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .benefits {
+                grid-template-columns: 1fr;
+            }
+
+            .cost-range {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="header">
+            <h1>🌞 Calculadora Solar</h1>
+            <p>Simule seu gerador de Energia Solar - Dimensionamento e Custos</p>
+        </div>
+
+        <!-- Tela de Captura de E-mail -->
+        <div class="email-capture" id="email-capture">
+            <h2>Acesse Gratuitamente Nossa Calculadora Solar</h2>
+            <p>Descubra quantos painéis solares você precisa e quanto custará seu sistema. Ferramenta profissional e gratuita!</p>
+            
+            <div class="email-form">
+                <h3>📧 Dados para Acesso</h3>
+                <form id="access-form">
+                    <div class="form-group">
+                        <label for="user-name">Nome Completo</label>
+                        <input type="text" id="user-name" required placeholder="Seu nome completo">
+                    </div>
+                    <div class="form-group">
+                        <label for="user-email">E-mail</label>
+                        <input type="email" id="user-email" required placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="user-phone">Telefone (opcional)</label>
+                        <input type="tel" id="user-phone" placeholder="(00) 00000-0000">
+                    </div>
+                    <button type="submit" class="access-btn">
+                        🚀 ACESSAR CALCULADORA GRATUITA
+                    </button>
+                </form>
+            </div>
+
+            <div class="benefits">
+                <div class="benefit-item">
+                    <div class="icon">⚡</div>
+                    <h4>Cálculo Preciso</h4>
+                    <p>Dimensionamento técnico baseado em sua localização</p>
+                </div>
+                <div class="benefit-item">
+                    <div class="icon">💰</div>
+                    <h4>Estimativa de Custos</h4>
+                    <p>Preços médios atualizados do mercado brasileiro</p>
+                </div>
+                <div class="benefit-item">
+                    <div class="icon">🆓</div>
+                    <h4>100% Gratuito</h4>
+                    <p>Sem custos ocultos ou compromisso</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculadora (inicialmente oculta) -->
+        <div class="calculator-content" id="calculator-content">
+            <div class="tabs">
+                <button class="tab active">SIMULAÇÃO</button>
+                <button class="tab">RESUMO</button>
+            </div>
+
+            <div class="content-area">
+                <div class="input-section">
+                    <div class="user-info" id="user-info">
+                        👋 Olá, <strong id="display-name">Usuário</strong>! Bem-vindo à nossa calculadora solar.
+                    </div>
+
+                    <div class="input-group">
+                        <label for="cep">CEP da Instalação</label>
+                        <input type="text" id="cep" placeholder="00000-000" maxlength="9">
+                        <div class="cep-info" id="cep-info" style="display: none;">
+                            📍 <span id="cidade-info">Cidade não identificada</span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="consumo">Gasto Mensal com Energia (kWh)</label>
+                        <input type="number" id="consumo" value="300" min="0" step="1" placeholder="Ex: 300">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="distribuidora">Distribuidora de Energia</label>
+                        <select id="distribuidora">
+                            <option value="">Selecione sua distribuidora...</option>
+                            <option value="copel">COPEL - Companhia Paranaense de Energia</option>
+                            <option value="cemig">CEMIG - Companhia Energética de Minas Gerais</option>
+                            <option value="cpfl">CPFL - Companhia Paulista de Força e Luz</option>
+                            <option value="enel">ENEL - Enel Distribuição</option>
+                            <option value="light">LIGHT - Light Serviços de Eletricidade</option>
+                            <option value="coelba">COELBA - Companhia de Eletricidade do Estado da Bahia</option>
+                            <option value="celpe">CELPE - Companhia Energética de Pernambuco</option>
+                            <option value="outras">Outras</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="potencia-painel">Potência do Painel (Wp)</label>
+                        <input type="number" id="potencia-painel" value="585" min="100" step="10">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="perdas">Perdas do Sistema (%)</label>
+                        <input type="number" id="perdas" value="20" min="0" max="50" step="1">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="irradiacao">Irradiação Solar (kWh/m²/dia)</label>
+                        <input type="number" id="irradiacao" value="4.2" min="0" step="0.1">
+                    </div>
+
+                    <button class="calculate-btn" onclick="calcular()">
+                        🔄 CALCULAR DIMENSIONAMENTO
+                    </button>
+
+                    <div class="info-box">
+                        <h4>ℹ️ SOBRE OS CÁLCULOS</h4>
+                        <p>Esta calculadora fornece dimensionamento técnico e estimativa de custos baseada em preços médios do mercado brasileiro. Para orçamentos precisos, consulte um instalador especializado.</p>
+                    </div>
+                </div>
+
+                <div class="results-section">
+                    <div class="solar-panel-icon">
+                        🔋
+                    </div>
+
+                    <div class="main-result">
+                        <h3>PRODUÇÃO MENSAL ESTIMADA</h3>
+                        <div class="value" id="producao-mensal">300</div>
+                        <div class="unit">kWh/mês</div>
+                    </div>
+
+                    <div class="results-grid">
+                        <div class="result-card">
+                            <h4>Potência do Kit</h4>
+                            <div class="value" id="potencia-kit">3,0</div>
+                            <div class="unit">kWp</div>
+                        </div>
+
+                        <div class="result-card">
+                            <h4>Quantidade de Módulos</h4>
+                            <div class="value" id="quantidade-modulos">6</div>
+                            <div class="unit">painéis 585W</div>
+                        </div>
+
+                        <div class="result-card">
+                            <h4>Área Necessária</h4>
+                            <div class="value" id="area-necessaria">12</div>
+                            <div class="unit">m²</div>
+                        </div>
+
+                        <div class="result-card">
+                            <h4>Energia Diária</h4>
+                            <div class="value" id="energia-diaria">10,0</div>
+                            <div class="unit">kWh/dia</div>
+                        </div>
+                    </div>
+
+                    <div class="cost-section">
+                        <h3>💰 ESTIMATIVA DE CUSTO DO KIT</h3>
+                        <div class="cost-range">
+                            <div class="cost-item">
+                                <div class="label">MÍNIMO</div>
+                                <div class="value" id="custo-minimo">R$ 7.500</div>
+                            </div>
+                            <div class="cost-item">
+                                <div class="label">MÁXIMO</div>
+                                <div class="value" id="custo-maximo">R$ 9.000</div>
+                            </div>
+                        </div>
+                        <div style="text-align: center; margin-top: 15px;">
+                            <div style="font-size: 0.9rem; opacity: 0.8;">Inclui: Painéis 585W + Inversor + Fiação + Estrutura</div>
+                            <div style="font-size: 0.9rem; opacity: 0.8;">Inversores: Growatt, Solis, Chint</div>
+                        </div>
+                    </div>
+
+                    <div class="cost-disclaimer">
+                        <strong>⚠️ IMPORTANTE:</strong> Esta é apenas uma <strong>estimativa baseada em preços médios</strong> do mercado brasileiro (R$ 2,51/Wp). Para obter o preço mais acertado e condições especiais, <strong>entre em contato com um vendedor especializado</strong>. Preços podem variar conforme região, marca dos equipamentos e condições de instalação.
+                    </div>
+
+                    <div class="info-box" style="margin-top: 30px; max-width: 500px;">
+                        <h4>📋 PRÓXIMOS PASSOS</h4>
+                        <p>Com estes dados técnicos e estimativa de custos, você pode solicitar orçamentos detalhados de instaladores locais. Considere fatores como orientação do telhado, sombreamento e estrutura de fixação.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados do usuário
+        let userData = {};
+
+        // Função para validar e-mail
+        function isValidEmail(email) {
+            const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+            return emailRegex.test(email);
+        }
+
+        // Função para formatar telefone
+        function formatPhone(phone) {
+            phone = phone.replace(/\D/g, "");
+            if (phone.length <= 10) {
+                return phone.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+            }
+            return phone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+        }
+
+        // Event listener para formatação do telefone
+        document.getElementById("user-phone").addEventListener("input", function(e) {
+            e.target.value = formatPhone(e.target.value);
+        });
+
+        // Função para processar o formulário de acesso
+        document.getElementById("access-form").addEventListener("submit", function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById("user-name").value.trim();
+            const email = document.getElementById("user-email").value.trim();
+            const phone = document.getElementById("user-phone").value.trim();
+
+            // Validações
+            if (!name) {
+                alert("Por favor, digite seu nome completo.");
+                return;
+            }
+
+            if (!email || !isValidEmail(email)) {
+                alert("Por favor, digite um e-mail válido.");
+                return;
+            }
+
+            // Salvar dados do usuário
+            userData = { name, email, phone };
+            
+            // Simular salvamento (aqui você pode integrar com sua API)
+            console.log("Dados do usuário:", userData);
+            
+            // Mostrar calculadora e ocultar formulário
+            document.getElementById("email-capture").style.display = "none";
+            document.getElementById("calculator-content").style.display = "block";
+            
+            // Atualizar nome na calculadora
+            document.getElementById("display-name").textContent = name.split(" ")[0];
+            
+            // Calcular automaticamente após exibir a calculadora
+            calcular();
+        });
+
+        // Função para formatar CEP
+        function formatarCEP(cep) {
+            cep = cep.replace(/\D/g, "");
+            if (cep.length <= 5) {
+                return cep;
+            }
+            return cep.replace(/(\d{5})(\d{1,3})/, "$1-$2");
+        }
+
+        // Função para buscar informações do CEP
+        async function buscarCEP(cep) {
+            try {
+                cep = cep.replace(/\D/g, "");
+                if (cep.length !== 8) return null;
+
+                const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+                const data = await response.json();
+                
+                if (data.erro) return null;
+                return data;
+            } catch (error) {
+                return null;
+            }
+        }
+
+        // Função para estimar irradiação por estado
+        function estimarIrradiacao(uf) {
+            const irradiacaoPorEstado = {
+                'AC': 4.8, 'AL': 5.5, 'AP': 4.9, 'AM': 4.7, 'BA': 5.8,
+                'CE': 6.0, 'DF': 5.2, 'ES': 4.8, 'GO': 5.1, 'MA': 5.3,
+                'MT': 5.4, 'MS': 5.0, 'MG': 4.7, 'PA': 4.8, 'PB': 5.7,
+                'PR': 4.2, 'PE': 5.9, 'PI': 5.6, 'RJ': 4.6, 'RN': 5.8,
+                'RS': 4.1, 'RO': 4.6, 'RR': 4.9, 'SC': 4.0, 'SP': 4.5,
+                'SE': 5.4, 'TO': 5.3
+            };
+            return irradiacaoPorEstado[uf] || 4.5;
+        }
+
+        // Event listener para o CEP (só funciona após acessar a calculadora)
+        document.getElementById("cep").addEventListener("input", function(e) {
+            e.target.value = formatarCEP(e.target.value);
+            
+            if (e.target.value.replace(/\D/g, "").length === 8) {
+                buscarCEP(e.target.value).then(data => {
+                    const cepInfo = document.getElementById("cep-info");
+                    const cidadeInfo = document.getElementById("cidade-info");
+                    
+                    if (data) {
+                        cidadeInfo.textContent = `${data.localidade} - ${data.uf}`;
+                        cepInfo.style.display = "block";
+                        
+                        // Atualizar irradiação baseada no estado
+                        const irradiacao = estimarIrradiacao(data.uf);
+                        document.getElementById("irradiacao").value = irradiacao;
+                        calcular();
+                    } else {
+                        cidadeInfo.textContent = "CEP não encontrado";
+                        cepInfo.style.display = "block";
+                    }
+                });
+            } else {
+                document.getElementById("cep-info").style.display = "none";
+            }
+        });
+
+        function calcular() {
+            // Obter valores dos inputs
+            const consumo = parseFloat(document.getElementById("consumo").value) || 0;
+            const potenciaPainel = parseFloat(document.getElementById("potencia-painel").value) || 585;
+            const perdas = parseFloat(document.getElementById("perdas").value) || 20;
+            const irradiacao = parseFloat(document.getElementById("irradiacao").value) || 4.2;
+
+            // Cálculos técnicos
+            const energiaDiaria = consumo / 30;
+            const potenciaPico = (energiaDiaria / irradiacao) / (1 - perdas / 100) * 1000;
+            const numPaineis = Math.ceil(potenciaPico / potenciaPainel);
+            const potenciaKit = (numPaineis * potenciaPainel) / 1000;
+            const areaNecessaria = numPaineis * 2; // Aproximadamente 2m² por painel
+            const producaoMensal = consumo; // Produção igual ao consumo
+
+            // Cálculos de custo baseados na pesquisa de mercado
+            // Preço médio atual: R$ 2,51/Wp (segundo trimestre 2025)
+            // Variação de ±15% para considerar diferentes fornecedores e regiões
+            const precoMedioPorWp = 2.51;
+            const potenciaTotal = potenciaKit * 1000; // Converter para Wp
+            const custoMedio = potenciaTotal * precoMedioPorWp;
+            const custoMinimo = custoMedio * 0.85; // 15% abaixo
+            const custoMaximo = custoMedio * 1.15; // 15% acima
+
+            // Atualizar resultados na tela
+            document.getElementById("producao-mensal").textContent = producaoMensal.toFixed(0);
+            document.getElementById("potencia-kit").textContent = potenciaKit.toFixed(1);
+            document.getElementById("quantidade-modulos").textContent = numPaineis;
+            document.getElementById("area-necessaria").textContent = areaNecessaria;
+            document.getElementById("energia-diaria").textContent = energiaDiaria.toFixed(1);
+            
+            // Atualizar custos
+            document.getElementById("custo-minimo").textContent = `R$ ${custoMinimo.toLocaleString('pt-BR', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+            document.getElementById("custo-maximo").textContent = `R$ ${custoMaximo.toLocaleString('pt-BR', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`;
+
+            // Salvar dados da simulação (integração futura)
+            const simulationData = {
+                user: userData,
+                inputs: { consumo, potenciaPainel, perdas, irradiacao },
+                results: { producaoMensal, potenciaKit, numPaineis, areaNecessaria, energiaDiaria },
+                costs: { custoMinimo, custoMaximo, custoMedio }
+            };
+            console.log("Dados da simulação:", simulationData);
+        }
+
+        // Recalcular quando qualquer input mudar (só após acessar a calculadora)
+        document.addEventListener("DOMContentLoaded", function() {
+            // Adiciona listeners aos inputs da calculadora APENAS QUANDO A CALCULADORA ESTIVER VISÍVEL
+            // Isso é tratado no access-form submit handler agora
+        });
+
+        // Funcionalidade das abas
+        document.querySelectorAll(".tab").forEach(tab => {
+            tab.addEventListener("click", function() {
+                document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+                this.classList.add("active");
+            });
+        });
+    </script>
+</body>
+</html>
+
